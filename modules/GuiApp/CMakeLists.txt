@@ -5,14 +5,20 @@ project(GuiApp)
 #
 
 set(HEADERS
-	)
-
-set(SOURCES
-	src/Main.cpp
+	include/ProfileTab.h
+	include/TabWidget.h
+	include/QWizardNewProfile.h
 	)
 
 set(MISC
 	src/pch.h)
+	
+set(SOURCES
+	src/Main.cpp
+	src/ProfileTab.cpp
+	src/TabWidget.cpp
+	src/QWizardNewProfile.cpp
+	)
 
 source_group("Sources" FILES ${SOURCES})
 source_group("Headers" FILES ${HEADERS})
@@ -39,17 +45,20 @@ find_package(Qt5Core)
 find_package(Qt5Widgets)
 find_package(Qt5Gui)
 
-add_executable(${PROJECT_NAME} WIN32
-	${MISC}
+add_executable(${PROJECT_NAME}
 	${HEADERS}
+	${MISC}
 	${SOURCES})
-
+	
 target_link_libraries(${PROJECT_NAME}
 	BackupManager
-	Qt5::Core
+	Qt5::Core)
+target_link_libraries(${PROJECT_NAME}
 	Qt5::Widgets)
+target_link_libraries(${PROJECT_NAME}
+	Qt5::Gui)
 
-#Precompiled headers.
+# Precompiled headers.
 set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/pch.h")
 cotire(${PROJECT_NAME})
 
