@@ -25,6 +25,9 @@ void BackupProfile::SaveProfile() const
 	config.SetValue("ChunkSize", QString::number(chunkSize_));
 	config.SetValue("Compression", QString::number(compressionLevel_));
 	config.SetValue("Files", backupedFilesPath_.join(';'));
+	config.SetValue("Date", date_);
+	config.SetValue("Time", time_);
+	config.SetValue("BackupDateOption", backupDateOption_);
 
 	config.Save(QString("%1.txt").arg(profileName_));
 }

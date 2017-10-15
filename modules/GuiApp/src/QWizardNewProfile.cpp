@@ -312,7 +312,8 @@ WizardSpecDateBackupPage::WizardSpecDateBackupPage(QWidget *parent)
 	labPicture_->setMask(pix.mask());
 	labCalendar_ = new QLabel(tr("Specify date: "));
 
-	calendar_ = new QCalendarWidget;
+	calendar_ = new QCalendarWidget();
+	calendar_->setLocale(QLocale::English);
 	calendar_->setMinimumDate(QDate(1900, 1, 1));
 	calendar_->setMaximumDate(QDate(3000, 1, 1));
 	calendar_->setGridVisible(true);
@@ -381,7 +382,7 @@ void WizardNewProfile::accept()
 	int comprLvl = field("comprLvl").toInt();
 	int chunkSize = field("chunkSize").toInt();
 	QStringList strListFiles = field("strList").toStringList();
-
+    
 	QString time = field("time").toString();
 	QString backupRepeat = field("backupRepeat").toString();
 
@@ -399,29 +400,42 @@ void WizardNewProfile::accept()
 			backuper.ModifyProfile(profileName).AddBackupedFolderPath(i);
 	}
 
-	backuper.GetProfile(profileName).SaveProfile();
-
 	if (backupRepeat == "Every day")
 	{
+		QString dayBackup = QDate::currentDate().toString();
 
+		backuper.ModifyProfile(profileName).SetOptionBackupDate(backupRepeat);
+		backuper.ModifyProfile(profileName).SetDateProfileBackup(dayBackup);
 	}
 
 	if (backupRepeat == "Every week")
 	{
 		QString dayWeek = field("dayWeek").toString();
-		qDebug() << dayWeek << endl;
+
+		backuper.ModifyProfile(profileName).SetOptionBackupDate(backupRepeat);
+		backuper.ModifyProfile(profileName).SetDateProfileBackup("Not completed");
 	}
 
 	if (backupRepeat == "On the specified date")
 	{
 		QString dateBackup = field("date").toString();
-		qDebug() << dateBackup << endl;
+
+		backuper.ModifyProfile(profileName).SetOptionBackupDate(backupRepeat);
+		backuper.ModifyProfile(profileName).SetDateProfileBackup(dateBackup);
 	}
 
 	if (backupRepeat == "Dafault profile without date to backup")
 	{
-
+		backuper.ModifyProfile(profileName).SetOptionBackupDate(backupRepeat);
+		backuper.ModifyProfile(profileName).SetDateProfileBackup("Empty");
 	}
+
+	backuper.ModifyProfile(profileName).SetTimeProfileBackup(time);
+	backuper.GetProfile(profileName).SaveProfile();
+
+	QString dayWeek = field("dayWeek").toString();
+	QString dateBackup = field(tr("date")).toString();
+	qDebug() << time << endl << dayWeek << endl << dateBackup << endl;
 
 	QDialog::accept();
 }
@@ -466,6 +480,7 @@ void WizardFilesPage::ClickedAddFile()
 		"C://",
 		"All files (*.*)"
 	);
+
 	if (filename != "")
 	{
 		listFiles_->addItem(filename);
@@ -499,7 +514,7 @@ int WizardDateBackupProfile::nextId() const
 	}
 
 	if (rbSpecDate_->isChecked() == true)
-	{
+	{	
 		return SPEC_DATE_BACKUP_PAGE;
 	}
 
@@ -553,13 +568,22 @@ int WizardSpecDateBackupPage::nextId() const
 		return SPEC_DATE_BACKUP_PAGE;
 	}
 
+	QTime timeBackup = field("time").toTime();
+
+	if ((WizardSpecDateBackupPage::isVisible() == true) && (timeBackup <= QTime::currentTime()) && (calendar_->selectedDate() == QDate::currentDate()))
+	{
+		QMessageBox::warning(0, "Warning", "Entered time to backup doesn't exist on selected date. \t");
+
+		return SPEC_DATE_BACKUP_PAGE;
+	}
+
 	return CONCLUSION_PAGE;
 }
 
 QString WizardSpecDateBackupPage::theStringDateBackup() const
 {
 	QString strDate;
-	strDate = calendar_->selectedDate().toString();
+	strDate = calendar_->selectedDate().toString("dd/MM/yyyy");
 
 	return strDate;
 }

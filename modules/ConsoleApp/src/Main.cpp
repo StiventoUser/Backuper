@@ -58,6 +58,8 @@ int main(int argc, char* argv[])
 				{
 					out << "+++++++++++++++++++++++++++\n";
 					out << "Name: " << pr.GetProfileName() << "\n";
+					out << "Date: " << pr.GetProfileDate() << "\n";
+					out << "Time: " << pr.GetProfileTime() << "\n";
 					out << "Chunk size: " << pr.GetChunkSize() << "\n";
 					out << "Compression: " << pr.GetCompressionLevel() << "\n";
 					out << "Result file: " << pr.GetBackupFilePath() << "\n";
@@ -75,7 +77,41 @@ int main(int argc, char* argv[])
 
 				continue;
 			}
+//ex
+			if (command == "prof_date")
+			{
+				QString name;
 
+				if (defProfile.isEmpty())
+					in >> name;
+				else
+					name = defProfile;
+
+				QString date;
+				in >> date;
+
+				backuper.ModifyProfile(name).SetDateProfileBackup(date);
+
+				continue;
+			}
+
+			if (command == "prof_time")
+			{
+				QString name;
+
+				if (defProfile.isEmpty())
+					in >> name;
+				else
+					name = defProfile;
+
+				QString time;
+				in >> time;
+
+				backuper.ModifyProfile(name).SetTimeProfileBackup(time);
+
+				continue;
+			}
+//end ex
 			if (command == "prof_compr")
 			{
 				QString name;

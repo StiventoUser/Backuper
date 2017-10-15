@@ -18,6 +18,12 @@ public:
 
 	//! Returns profile's name.
 	QString GetProfileName() const;
+	//! Returns profile's date for backup.
+	QString GetProfileDate() const;
+	//! Returns profile's time for backup.
+	QString GetProfileTime() const;
+	//! Returns option to date of backup profile.
+	QString GetOptionBackupDate() const;
 	//! Returns path to backup file.
 	QString GetBackupFilePath() const;
 	//! Returns paths to backuped files.
@@ -37,10 +43,17 @@ public:
 	void AddBackupedFilePath(const QString& path);
 	//! Adds path to backuped folder.
 	void AddBackupedFolderPath(const QString& path);
+	//! Sets date profile for backup.
+	void SetDateProfileBackup(const QString& date);
+	//! Sets time profile for backup.
+	void SetTimeProfileBackup(const QString& time);
+	//! Sets option to date of backup profile.
+	void SetOptionBackupDate(const QString& backupDateOption);
 	//! Sets chunk size.
 	void SetChunkSize(const quint64 chunkSIze);
 	//! Sets data compression level.
 	void SetCompressionLevel(const qint32 level);
+	
 
 	//! Loads profile from file.
 	void LoadProfile();
@@ -57,7 +70,13 @@ private:
 
 	//! Profile's name.
 	QString profileName_;
-	//! Chunk size in MB.
+	//! Profile's date for backup.
+	QString date_;
+	//! Profile's time for backup.
+	QString time_;
+	//! Option to date of backup profile.
+	QString backupDateOption_;
+	//! Chunk size in MB.	
 	quint64 chunkSize_ = 256;
 	//! Path to backup file.
 	QString backupFilePath_;
@@ -79,6 +98,21 @@ inline QString BackupProfile::GetEmptyDirPostfix() const
 inline QString BackupProfile::GetProfileName() const
 {
 	return profileName_;
+}
+
+inline QString BackupProfile::GetProfileDate() const
+{
+	return date_;
+}
+
+inline QString BackupProfile::GetProfileTime() const
+{
+	return time_;
+}
+
+inline QString BackupProfile::GetOptionBackupDate() const
+{
+	return backupDateOption_;
 }
 
 inline QString BackupProfile::GetBackupFilePath() const
@@ -119,6 +153,21 @@ inline void BackupProfile::SetBackupedFilesPath(const QStringList& list)
 inline void BackupProfile::AddBackupedFilePath(const QString& path)
 {
 	backupedFilesPath_.push_back(path);
+}
+
+inline void BackupProfile::SetDateProfileBackup(const QString& date)
+{
+	date_ = date;
+}
+
+inline void BackupProfile::SetTimeProfileBackup(const QString& time)
+{
+	time_ = time;
+}
+
+inline void BackupProfile::SetOptionBackupDate(const QString& backupDateOption)
+{
+	backupDateOption_ = backupDateOption;
 }
 
 inline void BackupProfile::SetChunkSize(const quint64 chunkSize)

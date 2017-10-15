@@ -37,9 +37,9 @@ class WizardNewProfile :
 {
 	Q_OBJECT
 
-		//
-		// Construction and destruction.
-		//
+	//
+	// Construction and destruction.
+	//
 
 public:
 	//!Constructor
