@@ -235,11 +235,11 @@ class WizardDateEveryWeekBackupPage
 {
 	Q_OBJECT
 
-		Q_PROPERTY(QString theStringDayWeek READ theStringDayWeek)
+	Q_PROPERTY(QString theStringDayWeek READ theStringDayWeek)
 
-		//
-		// Construction and destruction.
-		//
+	//
+	// Construction and destruction.
+	//
 
 public:
 	//! Constructor
@@ -262,6 +262,7 @@ private:
 	QLabel *labPicture_;
 	QLabel *labInfoPage_;
 	QLabel *labCombDaysWeek_;
+	int numberDayOfWeek_;
 	QStringList strListDaysWeek_;
 };
 

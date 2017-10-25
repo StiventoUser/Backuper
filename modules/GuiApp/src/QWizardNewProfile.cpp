@@ -402,7 +402,17 @@ void WizardNewProfile::accept()
 
 	if (backupRepeat == "Every day")
 	{
-		QString dayBackup = QDate::currentDate().toString();
+		QDate date = QDate::currentDate();
+		QString dayBackup; 
+
+		if (field("time").toTime() < QTime::currentTime())
+		{
+			dayBackup = date.addDays(+1).toString();
+		}
+		else
+		{
+			dayBackup = date.toString();
+		}
 
 		backuper.ModifyProfile(profileName).SetOptionBackupDate(backupRepeat);
 		backuper.ModifyProfile(profileName).SetDateProfileBackup(dayBackup);
@@ -410,10 +420,41 @@ void WizardNewProfile::accept()
 
 	if (backupRepeat == "Every week")
 	{
-		QString dayWeek = field("dayWeek").toString();
+		QString dayWeekBackup = field("dayWeek").toString();
+		int resultDayWeekBackup, numberDaysWeek = 7;
+
+		QString number = dayWeekBackup[dayWeekBackup.size() - 1];
+		int numberDayWeek = number.toInt();
+		++numberDayWeek;
+
+		QDate dateBackup = QDate::currentDate();
+		int currentDayOfWeek = dateBackup.dayOfWeek();
+		QString strDayWeek = QDate::longDayName(currentDayOfWeek);
+
+		if (numberDayWeek < currentDayOfWeek)
+		{
+			resultDayWeekBackup = numberDayWeek + (numberDaysWeek - currentDayOfWeek);
+			dayWeekBackup = dateBackup.addDays(resultDayWeekBackup).toString();
+		}
+		else if (numberDayWeek == currentDayOfWeek)
+		{
+			if (field("time").toTime() > QTime::currentTime())
+			{
+				dayWeekBackup = dateBackup.toString();
+			}
+			else
+			{
+				dayWeekBackup = dateBackup.addDays(numberDaysWeek).toString();
+			}
+		}
+		else
+		{
+			resultDayWeekBackup = numberDayWeek - currentDayOfWeek;
+			dayWeekBackup = dateBackup.addDays(resultDayWeekBackup).toString();
+		}
 
 		backuper.ModifyProfile(profileName).SetOptionBackupDate(backupRepeat);
-		backuper.ModifyProfile(profileName).SetDateProfileBackup("Not completed");
+		backuper.ModifyProfile(profileName).SetDateProfileBackup(dayWeekBackup);
 	}
 
 	if (backupRepeat == "On the specified date")
@@ -435,7 +476,6 @@ void WizardNewProfile::accept()
 
 	QString dayWeek = field("dayWeek").toString();
 	QString dateBackup = field(tr("date")).toString();
-	qDebug() << time << endl << dayWeek << endl << dateBackup << endl;
 
 	QDialog::accept();
 }
@@ -554,7 +594,9 @@ QString WizardDateBackupProfile::theString() const
 QString WizardDateEveryWeekBackupPage::theStringDayWeek() const
 {
 	QString strDayWeek;
+
 	strDayWeek = combDaysWeek_->itemText(combDaysWeek_->currentIndex());
+	strDayWeek += QString::number(combDaysWeek_->currentIndex());
 
 	return strDayWeek;
 }
